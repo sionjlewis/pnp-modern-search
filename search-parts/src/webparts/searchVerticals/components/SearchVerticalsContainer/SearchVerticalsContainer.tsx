@@ -6,6 +6,7 @@ import { ITheme } from '@uifabric/styling';
 import styles from './SearchVerticalsContainer.module.scss';
 import { PageOpenBehavior } from '../../../../helpers/UrlHelper';
 import { Icon, GlobalSettings } from 'office-ui-fabric-react';
+import { isEmpty } from '@microsoft/sp-lodash-subset';
 
 export default class SearchVerticalsContainer extends React.Component<ISearchVerticalsContainerProps, ISearchVerticalsContainerState> {
 
@@ -78,7 +79,9 @@ export default class SearchVerticalsContainer extends React.Component<ISearchVer
                 const behavior = vertical.openBehavior === PageOpenBehavior.NewTab ? '_blank' : '_self';
                 this.props.tokenService.replaceQueryVariables(vertical.linkUrl).then((resolvedUrl: string) => {
                     resolvedUrl = resolvedUrl.replace(/\{searchTerms\}|\{SearchBoxQuery\}/gi, GlobalSettings.getValue('searchBoxQuery'));
-                    window.open(resolvedUrl, behavior);
+                    // Send either the query parameters or fragments to another page, if included in the oroginal page's URL.
+                    let queryString = !isEmpty(window.location.search) ? window.location.search : !isEmpty(window.location.hash) ? window.location.hash : '';
+                    window.open(resolvedUrl + queryString, behavior);
                 });
 
             } else {

@@ -71,6 +71,7 @@ import { Toggle, GlobalSettings } from 'office-ui-fabric-react';
 import IQueryModifierConfiguration from '../../models/IQueryModifierConfiguration';
 import { SearchHelper } from '../../helpers/SearchHelper';
 import { StringHelper } from '../../helpers/StringHelper';
+import PnPTelemetry from "@pnp/telemetry-js";
 
 export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchResultsWebPartProps> implements IDynamicDataCallables {
 
@@ -208,7 +209,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         if (queryDataSourceValue && typeof (queryDataSourceValue) === 'string') {
             queryKeywords = queryDataSourceValue;
         }
-        else if (queryDataSourceValue && typeof (queryDataSourceValue) == "object") {
+        else if (queryDataSourceValue && typeof (queryDataSourceValue) === 'object') {
             //https://github.com/microsoft-search/pnp-modern-search/issues/325
             //new issue with search body as object - 2020-06-23
             const refChunks = this.properties.queryKeywords.reference.split(':');
@@ -369,6 +370,10 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     }
 
     protected async onInit(): Promise<void> {
+
+        // Disable PnP Telemetry
+        const telemetry = PnPTelemetry.getInstance();
+        telemetry.optOut();
 
         this.initializeRequiredProperties();
 

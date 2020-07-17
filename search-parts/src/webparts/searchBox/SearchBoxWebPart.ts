@@ -38,6 +38,7 @@ import { Toggle } from 'office-ui-fabric-react/lib/Toggle';
 import { ThemeProvider, ThemeChangedEventArgs, IReadonlyTheme } from '@microsoft/sp-component-base';
 import { isEqual, find } from '@microsoft/sp-lodash-subset';
 import { GlobalSettings } from 'office-ui-fabric-react';
+import PnPTelemetry from "@pnp/telemetry-js";
 
 export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWebPartProps> implements IDynamicDataCallables {
 
@@ -74,7 +75,7 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
             if (typeof (inputValue) === 'string') {
                 this._searchQuery = decodeURIComponent(inputValue);
             }
-            else if (typeof (inputValue === 'object')) {
+            else if (typeof (inputValue) === 'object') {
                 this._searchQuery = "";
                 //https://github.com/microsoft-search/pnp-modern-search/issues/325
                 //new issue with search body as object - 2020-06-23
@@ -156,6 +157,10 @@ export default class SearchBoxWebPart extends BaseClientSideWebPart<ISearchBoxWe
     }
 
     protected async onInit(): Promise<void> {
+
+        // Disable PnP Telemetry
+        const telemetry = PnPTelemetry.getInstance();
+        telemetry.optOut();
 
         this.context.dynamicDataSourceManager.initializeSource(this);
 
